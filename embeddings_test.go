@@ -14,7 +14,7 @@ import (
 )
 
 func TestEmbedding(t *testing.T) {
-	embeddedModels := []EmbeddingModel{
+	embeddedModels := []string{
 		AdaSimilarity,
 		BabbageSimilarity,
 		CurieSimilarity,
@@ -45,7 +45,7 @@ func TestEmbedding(t *testing.T) {
 		// the AdaSearchQuery type
 		marshaled, err := json.Marshal(embeddingReq)
 		checks.NoError(t, err, "Could not marshal embedding request")
-		if !bytes.Contains(marshaled, []byte(`"model":"`+model.String()+`"`)) {
+		if !bytes.Contains(marshaled, []byte(`"model":"`+model+`"`)) {
 			t.Fatalf("Expected embedding request to contain model field")
 		}
 
@@ -59,7 +59,7 @@ func TestEmbedding(t *testing.T) {
 		}
 		marshaled, err = json.Marshal(embeddingReqStrings)
 		checks.NoError(t, err, "Could not marshal embedding request")
-		if !bytes.Contains(marshaled, []byte(`"model":"`+model.String()+`"`)) {
+		if !bytes.Contains(marshaled, []byte(`"model":"`+model+`"`)) {
 			t.Fatalf("Expected embedding request to contain model field")
 		}
 
@@ -73,12 +73,13 @@ func TestEmbedding(t *testing.T) {
 		}
 		marshaled, err = json.Marshal(embeddingReqTokens)
 		checks.NoError(t, err, "Could not marshal embedding request")
-		if !bytes.Contains(marshaled, []byte(`"model":"`+model.String()+`"`)) {
+		if !bytes.Contains(marshaled, []byte(`"model":"`+model+`"`)) {
 			t.Fatalf("Expected embedding request to contain model field")
 		}
 	}
 }
 
+/*
 func TestEmbeddingModel(t *testing.T) {
 	var em EmbeddingModel
 	err := em.UnmarshalText([]byte("text-similarity-ada-001"))
@@ -94,6 +95,7 @@ func TestEmbeddingModel(t *testing.T) {
 		t.Errorf("Model is not equal to Unknown")
 	}
 }
+*/
 
 func TestEmbeddingEndpoint(t *testing.T) {
 	client, server, teardown := setupOpenAITestServer()
@@ -176,7 +178,7 @@ func TestEmbeddingResponseBase64_ToEmbeddingResponse(t *testing.T) {
 	type fields struct {
 		Object string
 		Data   []Base64Embedding
-		Model  EmbeddingModel
+		Model  string
 		Usage  Usage
 	}
 	tests := []struct {
