@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+/*
 // EmbeddingModel enumerates the models which can be used
 // to generate Embedding vectors.
 type EmbeddingModel int
@@ -102,7 +103,8 @@ var enumToString = map[EmbeddingModel]string{
 	AdaEmbeddingV2:        "text-embedding-ada-002",
 }
 
-var stringToEnum = map[string]EmbeddingModel{
+var string
+ToEnum = map[string]EmbeddingModel{
 	"text-similarity-ada-001":       AdaSimilarity,
 	"text-similarity-babbage-001":   BabbageSimilarity,
 	"text-similarity-curie-001":     CurieSimilarity,
@@ -121,6 +123,26 @@ var stringToEnum = map[string]EmbeddingModel{
 	"code-search-babbage-text-001":  BabbageCodeSearchText,
 	"text-embedding-ada-002":        AdaEmbeddingV2,
 }
+*/
+const (
+	AdaSimilarity         = "text-similarity-ada-001"
+	BabbageSimilarity     = "text-similarity-babbage-001"
+	CurieSimilarity       = "text-similarity-curie-001"
+	DavinciSimilarity     = "text-similarity-davinci-001"
+	AdaSearchDocument     = "text-search-ada-doc-001"
+	AdaSearchQuery        = "text-search-ada-query-001"
+	BabbageSearchDocument = "text-search-babbage-doc-001"
+	BabbageSearchQuery    = "text-search-babbage-query-001"
+	CurieSearchDocument   = "text-search-curie-doc-001"
+	CurieSearchQuery      = "text-search-curie-query-001"
+	DavinciSearchDocument = "text-search-davinci-doc-001"
+	DavinciSearchQuery    = "text-search-davinci-query-001"
+	AdaCodeSearchCode     = "code-search-ada-code-001"
+	AdaCodeSearchText     = "code-search-ada-text-001"
+	BabbageCodeSearchCode = "code-search-babbage-code-001"
+	BabbageCodeSearchText = "code-search-babbage-text-001"
+	AdaEmbeddingV2        = "text-embedding-ada-002"
+)
 
 // Embedding is a special format of data representation that can be easily utilized by machine
 // learning models and algorithms. The embedding is an information dense representation of the
@@ -136,10 +158,10 @@ type Embedding struct {
 
 // EmbeddingResponse is the response from a Create embeddings request.
 type EmbeddingResponse struct {
-	Object string         `json:"object"`
-	Data   []Embedding    `json:"data"`
-	Model  EmbeddingModel `json:"model"`
-	Usage  Usage          `json:"usage"`
+	Object string      `json:"object"`
+	Data   []Embedding `json:"data"`
+	Model  string      `json:"model"`
+	Usage  Usage       `json:"usage"`
 }
 
 type base64String string
@@ -170,7 +192,7 @@ type Base64Embedding struct {
 type EmbeddingResponseBase64 struct {
 	Object string            `json:"object"`
 	Data   []Base64Embedding `json:"data"`
-	Model  EmbeddingModel    `json:"model"`
+	Model  string            `json:"model"`
 	Usage  Usage             `json:"usage"`
 }
 
@@ -216,7 +238,7 @@ const (
 
 type EmbeddingRequest struct {
 	Input          any                     `json:"input"`
-	Model          EmbeddingModel          `json:"model"`
+	Model          string                  `json:"model"`
 	User           string                  `json:"user"`
 	EncodingFormat EmbeddingEncodingFormat `json:"encoding_format,omitempty"`
 }
@@ -236,7 +258,7 @@ type EmbeddingRequestStrings struct {
 	Input []string `json:"input"`
 	// ID of the model to use. You can use the List models API to see all of your available models,
 	// or see our Model overview for descriptions of them.
-	Model EmbeddingModel `json:"model"`
+	Model string `json:"model"`
 	// A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
 	User string `json:"user"`
 	// EmbeddingEncodingFormat is the format of the embeddings data.
@@ -264,7 +286,7 @@ type EmbeddingRequestTokens struct {
 	Input [][]int `json:"input"`
 	// ID of the model to use. You can use the List models API to see all of your available models,
 	// or see our Model overview for descriptions of them.
-	Model EmbeddingModel `json:"model"`
+	Model string `json:"model"`
 	// A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse.
 	User string `json:"user"`
 	// EmbeddingEncodingFormat is the format of the embeddings data.
@@ -292,7 +314,7 @@ func (c *Client) CreateEmbeddings(
 	conv EmbeddingRequestConverter,
 ) (res EmbeddingResponse, err error) {
 	baseReq := conv.Convert()
-	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL("/embeddings", baseReq.Model.String()), withBody(baseReq))
+	req, err := c.newRequest(ctx, http.MethodPost, c.fullURL("/embeddings", baseReq.Model), withBody(baseReq))
 	if err != nil {
 		return
 	}
