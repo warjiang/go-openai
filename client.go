@@ -225,3 +225,8 @@ func (c *Client) handleErrorResp(resp *http.Response) error {
 	errRes.Error.HTTPStatusCode = resp.StatusCode
 	return errRes.Error
 }
+
+// FullURL is alias for Client.fullURL.
+func (c *Client) FullURL(suffix string, args ...any) string {
+	return c.fullURL(suffix, args...)
+}
